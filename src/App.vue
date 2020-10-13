@@ -12,7 +12,7 @@ import IDVC from '@idscan/idvc';
 
 let data =  {
     publicKey: '***REMOVED***',
-    backServerUrl: '***REMOVED***',
+    backendServerUrl: '***REMOVED***',
     licenseKey: '***REMOVED***'
   };
 
@@ -51,7 +51,7 @@ export default {
                 body: JSON.stringify (request)
             }).then (response => response.json ())
                 .then (response => {
-                    fetch (this.backEndUrl + '/api/ValidationRequests/complete/', {
+                    fetch (this.backendServerUrl + '/api/ValidationRequests/complete/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json;charset=utf-8'
