@@ -10,13 +10,15 @@
 <script>
 import IDVC from '@idscan/idvc';
 
+let data =  {
+    publicKey: '***REMOVED***',
+    backServerUrl: '***REMOVED***',
+    licenseKey: '***REMOVED***'
+  };
+
 export default {
   name: 'App',
-  data: {
-    publicKey = '***REMOVED***',
-    backServerUrl = '***REMOVED***',
-    licenseKey = '***REMOVED***'
-  },
+  data: data,
   mounted: function() {
       new IDVC({
         el: 'videoCapturingEl',
@@ -73,6 +75,8 @@ export default {
 </script>
 
 <style>
+@import '../node_modules/@idscan/idvc/dist/css/idvc.css';
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
