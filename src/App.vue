@@ -1,17 +1,73 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+      <h1>
+        DVS Demo Application
+      </h1>
+      <div id="videoCapturingEl"></div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import IDVC from '@idscan/idvc';
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  data: {
+    publicKey = '***REMOVED***',
+    backServerUrl = '***REMOVED***',
+    licenseKey = '***REMOVED***'
+  },
+  mounted: function() {
+      new IDVC({
+        el: 'videoCapturingEl',
+        networkUrl: '/assets/networks',
+        tapBackSide : true,
+        licenseKey: this.licenseKey,
+        steps: [
+            {type: 'front', name: 'Front Scan'},
+            {type: 'back', name: 'Back Scan'},
+            {type: 'face', name: 'Selfie'}
+        ],
+        submit (data) {
+            let backStep = data.steps.find(item => item.type === 'back')
+            let trackString = (backStep && backStep.trackString) ? backStep.trackString : ''
+
+            let request = {
+                frontImageBase64: data.steps.find (item => item.type === 'front').img.split (/:image\/(jpeg|png);base64,/)[2],
+                backOrSecondImageBase64: backStep.img.split (/:image\/(jpeg|png);base64,/)[2],
+                faceImageBase64: data.steps.find (item => item.type === 'face').img.split (/:image\/(jpeg|png);base64,/)[2],
+                documentType: data.documentType,
+                trackString: trackString
+            }
+            
+            fetch ('https://dvs2.idware.net/api/Request', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Authorization': `Bearer ${this.publicKey}`
+                },
+                body: JSON.stringify (request)
+            }).then (response => response.json ())
+                .then (response => {
+                    fetch (this.backEndUrl + '/api/ValidationRequests/complete/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json;charset=utf-8'
+                        },
+                        body: JSON.stringify ({
+                            requestId: response.requestId,
+                            documentType: response.documentType
+                        })
+                    }).then (response => response.json ())
+                        .then (data => {
+                            
+                            alert((data.payload.isDocumentSuccess) ? 'Document valid' : 'Document invalid')
+                        })
+                }).catch(() => {
+                
+            })
+        }
+        });
   }
 }
 </script>
