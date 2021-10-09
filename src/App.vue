@@ -11,9 +11,9 @@
 import IDVC from '@idscan/idvc';
 
 let data =  {
-    publicKey: '***REMOVED***',
-    backendServerUrl: '***REMOVED***',
-    licenseKey: '***REMOVED***'
+    publicKey: 'REPLACE ME WITH YOUR PUBLIC KEY',
+    backendServerUrl: 'REPLACE ME WITH YOUR BACKEND SERVICE URL',
+    licenseKey: 'REPLACE ME WITH YOUR LICENSE KEY'
   };
 
 export default {
@@ -23,11 +23,9 @@ export default {
       new IDVC({
         el: 'videoCapturingEl',
         networkUrl: '/assets/networks',
-        tapBackSide : true,
         licenseKey: this.licenseKey,
         steps: [
             {type: 'front', name: 'Front Scan'},
-            {type: 'back', name: 'Back Scan'},
             {type: 'face', name: 'Selfie'}
         ],
         submit (data) {
