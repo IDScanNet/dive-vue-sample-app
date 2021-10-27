@@ -6,7 +6,7 @@ npm install
 
 2. Copy over the neural network binary files to the public directory
 ```
-npm run copyNeuralNetworks
+npm run copyNetworks
 ```
 
 # Building and Running the Application
