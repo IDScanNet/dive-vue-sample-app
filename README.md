@@ -1,4 +1,4 @@
-# Project setup
+# DVS Web API Vue Sample Application
 1. Install project dependencies
 ```
 npm install
