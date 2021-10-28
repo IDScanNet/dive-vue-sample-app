@@ -10,15 +10,16 @@ npm run copyNetworks
 ```
 
 # Building and Running the Application
-1. Compile and run the application locally
+1. Build the application
+```
+npm run build
+```
+
+2. Run the application locally
 ```
 npm run serve
 ```
 
-2. Compile and minify the application for production
-```
-npm run build
-```
 
 
 # Deploy to Firebase
