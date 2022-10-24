@@ -1,47 +1,24 @@
-# Project setup
-1. Install project dependencies
+# dvs-sample-vue-app
+
+## Project setup
 ```
 npm install
 ```
 
-2. Copy over the neural network binary files to the public directory
-```
-npm run copyNetworks
-```
-
-# Building and Running the Application
-1. Compile and run the application locally
+### Compiles and hot-reloads for development
 ```
 npm run serve
 ```
 
-2. Compile and minify the application for production
+### Compiles and minifies for production
 ```
 npm run build
 ```
 
-
-# Deploy to Firebase
-
-1. Install the Firebase CLI
-
+### Lints and fixes files
 ```
-npm install -g firebase-tools
+npm run lint
 ```
 
-2. Login in to Firebase
-```
-firebase login
-```
-
-3. Setup the firebase project we are deploying to
-```
-firebase init
-```
-
-1. Deploy the project to firebase
-
-```
-firebase deploy
-```
-
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
