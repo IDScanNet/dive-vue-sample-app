@@ -1,4 +1,4 @@
-# DVS Web API Vue Sample Application
+# DIVE Web API Vue Sample Application
 
 ### Install project dependencies```
 npm install
