@@ -17,34 +17,38 @@ export default {
             el: "videoCapturingEl",
             licenseKey: "LICENSE_KEY",
             networkUrl: "networks",
-            resizeUploadedImage: 1600,
-            fixFrontOrientAfterUpload: true,
+            chunkPublicPath: "networks",
+            resizeUploadedImage: 1200,
+            fixFrontOrientAfterUpload: false,
             autoContinue: true,
-            isShowDocumentTypeSelect: true,
-            realFaceMode: "auto",
-            useCDN: true,
+            isShowDocumentTypeSelect: false,
+            useCDN: false,
+            isShowGuidelinesButton: false,
+            isSubmitMetaData: false,
+            useHeic: false,
+            showSubmitBtn: false,
+            hideDocumentTitle: false,
             language: "en",
-            isShowGuidelinesButton: true,
+            realFaceMode: "auto",
+            modalPosition: 'top',
+            processingImageFormat: 'jpeg',
             documentTypes: [
                 {
                 type: "ID",
                 steps: [
-                    {
-                    type: "front",
-                    name: "Document Front",
-                    mode: { uploader: true, video: true },
-                    },
-                    {
-                    type: "pdf",
-                    name: "Document PDF417 Barcode",
-                    mode: { uploader: true, video: true },
-                    },
-                    {
-                    type: "face",
-                    name: "Face",
-                    mode: { uploader: true, video: true },
-                    },
-                ],
+                        {
+                        type: "front",
+                        name: "Document Front",
+                        },
+                        {
+                        type: "pdf",
+                        name: "Document Back",
+                        },
+                        {
+                        type: "face",
+                        name: "Face",
+                        },
+                    ],
                 },
                 {
                 type: "Passport",
@@ -52,15 +56,13 @@ export default {
                     {
                     type: "mrz",
                     name: "Passport Front",
-                    mode: { uploader: true, video: true },
                     },
                     {
                     type: "face",
                     name: "Face",
-                    mode: { uploader: true, video: true },
                     },
-                ],
-                },
+                    ],
+                }
             ],
             onChange(data) {
                 console.log("on change", data);
@@ -81,9 +83,8 @@ export default {
                 idvc.showSpinner(true);
                 let frontStep, pdfStep, faceStep, mrzStep;
                 let frontImage, backImage, faceImage;
-                let trackString;
-                let captureMethod;
-                let verifyFace = true;
+                let rawTrackString;
+
 
                 switch (data.documentType) {
                 // Drivers License and Identification Card
@@ -92,16 +93,11 @@ export default {
                     pdfStep = data.steps.find((item) => item.type === "pdf");
                     faceStep = data.steps.find((item) => item.type === "face");
 
-                    frontImage = frontStep.img.split(/:image\/(jpeg|png);base64,/)[2];
-                    backImage = pdfStep.img.split(/:image\/(jpeg|png);base64,/)[2];
-                    faceImage = faceStep.img.split(/:image\/(jpeg|png);base64,/)[2];
+                    frontImage = frontStep.img.split(/:image\/(jpeg|png|webp);base64,/)[2];
+                    backImage = pdfStep.img.split(/:image\/(jpeg|png|webp);base64,/)[2];
+                    faceImage = faceStep.img.split(/:image\/(jpeg|png|webp);base64,/)[2];
 
-                    trackString = pdfStep && pdfStep.trackString ? pdfStep.trackString : "";
-
-                    captureMethod =
-                    JSON.stringify(+frontStep.isAuto) +
-                    JSON.stringify(+pdfStep.isAuto) +
-                    JSON.stringify(+faceStep.isAuto);
+                    rawTrackString = pdfStep && pdfStep.trackString ? pdfStep.trackString : "";
 
                     break;
                 // US and International Passports
@@ -109,68 +105,36 @@ export default {
                     mrzStep = data.steps.find((item) => item.type === "mrz");
                     faceStep = data.steps.find((item) => item.type === "face");
 
-                    frontImage = mrzStep.img.split(/:image\/(jpeg|png);base64,/)[2];
-                    faceImage = faceStep.img.split(/:image\/(jpeg|png);base64,/)[2];
+                    frontImage = mrzStep.img.split(/:image\/(jpeg|png|webp);base64,/)[2];
+                    faceImage = faceStep.img.split(/:image\/(jpeg|png|webp);base64,/)[2];
 
-                    trackString = mrzStep && mrzStep.mrzText ? mrzStep.mrzText : "";
+                    rawTrackString = mrzStep && mrzStep.mrzText ? mrzStep.mrzText : "";
 
-                    captureMethod =
-                    JSON.stringify(+mrzStep.isAuto) + JSON.stringify(+faceStep.isAuto);
-
-                    break;
-                // US Passport Cards
-                case 3:
-                    break;
-                // US Green Cards
-                case 6:
-                    break;
-                // International IDs with 3 line MRZs
-                case 7:
-                    frontStep = data.steps.find((item) => item.type === "front");
-                    mrzStep = data.steps.find((item) => item.type === "mrz");
-                    faceStep = data.steps.find((item) => item.type === "face");
-
-                    frontImage = frontStep.img.split(/:image\/(jpeg|png);base64,/)[2];
-                    backImage = mrzStep.img.split(/:image\/(jpeg|png);base64,/)[2];
-                    faceImage = faceStep.img.split(/:image\/(jpeg|png);base64,/)[2];
-
-                    trackString = mrzStep && mrzStep.mrzText ? mrzStep.mrzText : "";
-
-                    captureMethod =
-                    JSON.stringify(+frontStep.isAuto) +
-                    JSON.stringify(+mrzStep.isAuto) +
-                    JSON.stringify(+faceStep.isAuto);
-
-                    break;
-                case 8:
-                    // photoStep = data.steps.find((item) => item.type === "photo");
-                    // photoImage = photoStep.img.split(/:image\/(jpeg|png);base64,/)[2];
-                    // captureMethod = JSON.stringify(+photoStep.isAuto);
-                    // verifyFace = false;
-                    break;
-                case 9:
-                    // barcodeStep = data.steps.find((item) => item.type === "barcode");
-                    // barcodeImage = barcodeStep.img.split(/:image\/(jpeg|png);base64,/)[2];
-                    // captureMethod = JSON.stringify(+barcodeStep.isAuto);
-                    // verifyFace = false;
                     break;
                 default:
                 }
 
+                const trackStringArray = rawTrackString.split(".");
+                let trackString = trackStringArray[0];
+                let barcodeParams = trackStringArray[1];
+
                 let request = {
-                frontImageBase64: frontImage,
-                backOrSecondImageBase64: backImage,
-                faceImageBase64: faceImage,
-                documentType: data.documentType,
-                trackString: trackString,
-                ssn: null,
-                overriddenSettings: null,
-                userAgent: window.navigator.userAgent,
-                captureMethod: captureMethod,
-                verifyFace: verifyFace,
+                    frontImageBase64: frontImage,
+                    backOrSecondImageBase64: backImage,
+                    faceImageBase64: faceImage,
+                    documentType: data.documentType,
+                    trackString:{
+                        data:  trackString,
+                        barcodeParams: barcodeParams
+                    },
+                    overriddenSettings: {
+                        isOCREnabled: true,
+                        isBackOrSecondImageProcessingEnabled: true,
+                        isFaceMatchEnabled: true
+                    }
                 };
 
-                fetch("https://dvs2.idware.net/api/v3/Verify", {
+                fetch("https://dvs2.idware.net/api/v4/verify", {
                 method: "POST",
                 headers: {
                     Authorization: "Bearer SECRET_KEY",
